@@ -2,7 +2,7 @@ use crate::args::RunArgs;
 
 use std::fs::read_to_string;
 
-pub fn run(args: &RunArgs) -> i64 {
+pub fn run(args: &RunArgs) -> i32 {
     let data = read_to_string(&args.input_file).expect("Error opening input file");
 
     match args.part {
@@ -13,7 +13,7 @@ pub fn run(args: &RunArgs) -> i64 {
     }
 }
 
-fn get_score(c: char) -> i64 {
+fn get_score(c: char) -> i32 {
     match c {
         'B' => 1,
         'C' => 3,
@@ -22,11 +22,11 @@ fn get_score(c: char) -> i64 {
     }
 }
 
-fn run_part1(input: String) -> i64 {
+fn run_part1(input: String) -> i32 {
     input.chars().map(get_score).sum()
 }
 
-fn run_part2(input: String) -> i64 {
+fn run_part2(input: String) -> i32 {
     let mut score = 0;
     let input: Vec<char> = input.chars().collect();
     for i in (0..input.len() - 1).step_by(2) {
@@ -39,7 +39,7 @@ fn run_part2(input: String) -> i64 {
     score
 }
 
-fn run_part3(input: String) -> i64 {
+fn run_part3(input: String) -> i32 {
     let mut score = 0;
     let input: Vec<char> = input.chars().collect();
     for i in (0..input.len() - 1).step_by(3) {

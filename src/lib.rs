@@ -22,15 +22,11 @@ macro_rules! define_fun {
     ($year_fn:ident: $($day:ident),*) => {
         fn $year_fn() -> Vec<Solution> {
             vec![$({
-                let run_fn = |args: &RunArgs| {
-                    use $year_fn::$day::run;
-                    run(args)
-                };
-
                 let year = stringify!($year_fn).strip_prefix("year_").unwrap().parse().unwrap();
                 let day = stringify!($day).strip_prefix("day").unwrap().parse().unwrap();
+                let run = |args: &RunArgs| { $year_fn::$day::run(args).into() };
 
-                Solution { year, day, run: run_fn }
+                Solution { year, day, run }
             },)*]
         }
     }
