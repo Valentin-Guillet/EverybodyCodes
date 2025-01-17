@@ -32,8 +32,8 @@ macro_rules! define_fun {
     }
 }
 
-load_year!(year_2024: day01);
-define_fun!(year_2024: day01);
+load_year!(year_2024: day01, day02);
+define_fun!(year_2024: day01, day02);
 
 pub fn run_solution(args: &RunArgs) -> i64 {
     let run_fn: Vec<Solution> = iter::empty()
