@@ -7,25 +7,12 @@ pub fn run(args: &RunArgs) -> i32 {
     let grid: Vec<&str> = data.lines().collect();
 
     match args.part {
-        1 => run_part1(&grid),
-        2 => run_part2(&grid),
-        3 => run_part3(&grid),
+        1 | 2 => count_diggable_blocks(&grid, can_dig),
+        3 => count_diggable_blocks(&grid, can_dig_diagonaly),
         _ => unreachable!(),
     }
 }
 
-
-fn run_part1(grid: &[&str]) -> i32 {
-    count_diggable_blocks(grid, can_dig)
-}
-
-fn run_part2(grid: &[&str]) -> i32 {
-    count_diggable_blocks(grid, can_dig)
-}
-
-fn run_part3(grid: &[&str]) -> i32 {
-    count_diggable_blocks(grid, can_dig_diagonaly)
-}
 fn can_dig(grid: &[Vec<bool>], row: usize, col: usize) -> bool {
     (1..grid.len() - 1).contains(&row)
         && (1..grid[0].len() - 1).contains(&col)

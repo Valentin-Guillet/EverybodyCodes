@@ -11,14 +11,14 @@ pub fn run(args: &RunArgs) -> i32 {
     let haystacks: Vec<&str> = lines.collect();
 
     match args.part {
-        1 => run_part1(&haystacks, &needles),
-        2 => run_part2(&haystacks, &needles),
-        3 => run_part3(&haystacks, &needles),
+        1 => count_words(&haystacks, &needles),
+        2 => count_runes(&haystacks, &needles),
+        3 => find_words_in_grid(&haystacks, &needles),
         _ => unreachable!(),
     }
 }
 
-fn run_part1(haystacks: &[&str], needles: &[&str]) -> i32 {
+fn count_words(haystacks: &[&str], needles: &[&str]) -> i32 {
     let mut ans = 0;
     for haystack in haystacks {
         for needle in needles {
@@ -32,7 +32,7 @@ fn run_part1(haystacks: &[&str], needles: &[&str]) -> i32 {
     ans
 }
 
-fn run_part2(haystacks: &[&str], needles: &[&str]) -> i32 {
+fn count_runes(haystacks: &[&str], needles: &[&str]) -> i32 {
     let mut ans = 0;
     for haystack in haystacks {
         let haystack = haystack.as_bytes();
@@ -59,7 +59,7 @@ fn run_part2(haystacks: &[&str], needles: &[&str]) -> i32 {
     ans
 }
 
-fn run_part3(grid: &[&str], needles: &[&str]) -> i32 {
+fn find_words_in_grid(grid: &[&str], needles: &[&str]) -> i32 {
     let mut seen = vec![vec![false; grid[0].len()]; grid.len()];
     for row in 0..grid.len() {
         for col in 0..grid[0].len() {
