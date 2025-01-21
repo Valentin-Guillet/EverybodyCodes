@@ -9,7 +9,6 @@ fn main() {
 
     let solution = run_solution(&args);
     println!(
-        // "Year {} day {:02} part {} answer: {solution}",
         "{}/{:02}/{} Answer: {solution}",
         args.year, args.day, args.part
     );
