@@ -25,6 +25,6 @@ pub fn run(args: &RunArgs) -> i32 {
         2 => unimplemented!(),
         3 => unimplemented!(),
         _ => unreachable!(),
-  }
+    }
 }
 EOF
