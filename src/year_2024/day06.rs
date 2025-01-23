@@ -7,7 +7,7 @@ use std::{
 
 type Tree<'a> = HashMap<&'a str, Vec<&'a str>>;
 
-pub fn run(args: &RunArgs) -> i32 {
+pub fn run(args: &RunArgs) -> String {
     let data = read_to_string(&args.input_file).expect("Error opening input file");
 
     let mut tree = Tree::new();
@@ -25,19 +25,16 @@ pub fn run(args: &RunArgs) -> i32 {
     }
 
     let unique_fruit_path = get_unique_fruit_path(&tree, &parents);
-    if args.part == 1 {
-        println!("{}", unique_fruit_path.join(""));
-    } else {
-        println!(
-            "{}",
-            unique_fruit_path
-                .iter()
-                .map(|br| br.get(..1).unwrap())
-                .collect::<Vec<&str>>()
-                .join("")
-        );
+
+    match args.part {
+        1 => unique_fruit_path.join(""),
+        2 | 3 => unique_fruit_path
+            .iter()
+            .map(|br| br.get(..1).unwrap())
+            .collect::<Vec<&str>>()
+            .join(""),
+        _ => unreachable!(),
     }
-    0
 }
 
 fn get_unique_fruit_path<'a>(tree: &Tree<'a>, parents: &HashMap<&'a str, &'a str>) -> Vec<&'a str> {
