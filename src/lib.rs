@@ -1,13 +1,13 @@
 mod args;
 
-use std::iter;
+use std::{fmt::Display, iter};
 
 pub use args::RunArgs;
 
 struct Solution {
     year: u32,
     day: u8,
-    run: fn(&RunArgs) -> i64,
+    run: fn(&RunArgs) -> Box<dyn Display>,
 }
 
 macro_rules! load_year {
@@ -24,7 +24,7 @@ macro_rules! define_fun {
             vec![$({
                 let year = stringify!($year_fn).strip_prefix("year_").unwrap().parse().unwrap();
                 let day = stringify!($day).strip_prefix("day").unwrap().parse().unwrap();
-                let run = |args: &RunArgs| { $year_fn::$day::run(args).into() };
+                let run = |args: &RunArgs| Box::new($year_fn::$day::run(args)) as Box<dyn Display>;
 
                 Solution { year, day, run }
             },)*]
@@ -35,7 +35,7 @@ macro_rules! define_fun {
 load_year!(year_2024: day01, day02, day03, day04, day05, day06, day07);
 define_fun!(year_2024: day01, day02, day03, day04, day05, day06, day07);
 
-pub fn run_solution(args: &RunArgs) -> i64 {
+pub fn run_solution(args: &RunArgs) -> Box<dyn Display> {
     let run_fn: Vec<Solution> = iter::empty()
         .chain(year_2024())
         .filter(|solution| args.year == solution.year && args.day == solution.day)
