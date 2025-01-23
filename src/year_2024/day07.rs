@@ -1,24 +1,22 @@
 use crate::args::RunArgs;
 
-use std::fs::read_to_string;
+use std::{fmt::Display, fs::read_to_string};
 
 type Pos = (usize, usize);
 type Plan = (char, Vec<char>);
 
-pub fn run(args: &RunArgs) -> i32 {
+pub fn run(args: &RunArgs) -> Box<dyn Display> {
     let data = read_to_string(&args.input_file).expect("Error opening input file");
 
     let (race_track, plans) = parse_input(data);
     let race_track = race_track.chars().collect::<Vec<char>>();
 
-    if args.part < 3 {
-        let nb_loops = if args.part == 1 { 1 } else { 10 };
-        let ranked_plans = rank_plans(&race_track, &plans, nb_loops);
-        println!("Ranked plans: {}", String::from_iter(ranked_plans));
-        return 0;
+    match args.part {
+        1 => Box::new(String::from_iter(rank_plans(&race_track, &plans, 1))),
+        2 => Box::new(String::from_iter(rank_plans(&race_track, &plans, 10))),
+        3 => Box::new(count_winning_plans(&race_track, &plans[0], 2024)),
+        _ => unreachable!(),
     }
-
-    count_winning_plans(&race_track, &plans[0], 2024).into()
 }
 
 fn parse_input(data: String) -> (String, Vec<Plan>) {
@@ -78,7 +76,7 @@ fn get_next_pos(racetrack_vec: &[Vec<char>], pos: Pos, prev_pos: Pos) -> Pos {
 fn get_plan_score(track: &[char], plan: &[char], nb_loops: u16) -> u64 {
     let mut total_power = 0;
 
-    let mut states: Vec<(usize, u64, u64)> = Vec::new();
+    let mut states: Vec<(usize, i64, i64)> = Vec::new();
     let mut power = 10;
     let mut plan_step = 0;
     for loop_id in 0..nb_loops {
@@ -86,16 +84,16 @@ fn get_plan_score(track: &[char], plan: &[char], nb_loops: u16) -> u64 {
             for i in 0..nb_loops - loop_id {
                 let state_id = ((loop_id + i) % states.len() as u16) as usize;
                 let (_, loop_sum, loop_diff) = states[state_id];
-                total_power += power * track.len() as u64 + loop_sum;
+                total_power += power * track.len() as i64 + loop_sum;
                 power += loop_diff;
             }
 
-            return total_power;
+            return total_power as u64;
         }
         let init_plan_step = plan_step;
 
-        let mut loop_sum: i32 = 0;
-        let mut loop_diff: i32 = 0;
+        let mut loop_sum: i64 = 0;
+        let mut loop_diff: i64 = 0;
         for track_action in track {
             loop_diff = match track_action {
                 '+' => loop_diff + 1,
@@ -110,14 +108,12 @@ fn get_plan_score(track: &[char], plan: &[char], nb_loops: u16) -> u64 {
             plan_step = (plan_step + 1) % plan.len();
         }
 
-        let loop_sum = loop_sum as u64;
-        let loop_diff = loop_diff as u64;
         states.push((init_plan_step, loop_sum, loop_diff));
-        total_power += power * track.len() as u64 + loop_sum;
+        total_power += power * track.len() as i64 + loop_sum;
         power += loop_diff;
     }
 
-    total_power
+    total_power as u64
 }
 
 fn rank_plans(track: &[char], plans: &Vec<Plan>, nb_loops: u16) -> Vec<char> {
