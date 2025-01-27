@@ -32,8 +32,8 @@ macro_rules! define_fun {
     }
 }
 
-load_year!(year_2024: day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13);
-define_fun!(year_2024: day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13);
+load_year!(year_2024: day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13, day14);
+define_fun!(year_2024: day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13, day14);
 
 pub fn run_solution(args: &RunArgs) -> Box<dyn Display> {
     let run_fn: Vec<Solution> = iter::empty()
