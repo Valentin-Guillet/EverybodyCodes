@@ -10,7 +10,7 @@ day=$(printf "%02d" $day)
 
 mkdir -p ./input/year_$year/day$day
 
-sed -i "/load_year\!/,/^$/ s/\(day[[:digit:]]\{2\}\))/\1, day$day)/" src/lib.rs
+sed -i "/load_year\!/ s/\(day[[:digit:]]\{2\}\))/\1, day$day)/" src/lib.rs
 
 cat << EOF > src/year_$year/day$day.rs
 use crate::args::RunArgs;
