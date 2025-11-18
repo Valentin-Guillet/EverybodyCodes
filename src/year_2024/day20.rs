@@ -80,7 +80,11 @@ fn fly_for(map: &[Vec<char>], nb_seconds: u32) -> u32 {
         states = next_states;
     }
 
-    states.iter().map(|&(x, y, dir)| min_altitudes[x][y][dir]).max().unwrap()
+    states
+        .iter()
+        .map(|&(x, y, dir)| min_altitudes[x][y][dir])
+        .max()
+        .unwrap()
 }
 
 fn find_path(map: &[Vec<char>]) -> u32 {
@@ -92,7 +96,8 @@ fn find_path(map: &[Vec<char>]) -> u32 {
         min_altitudes[start_pos.0][start_pos.1][dir][0] = 10000;
     }
 
-    let mut queue: VecDeque<State> = VecDeque::from_iter((0..4).map(|dir| (start_pos.0, start_pos.1, dir, 0, 0)));
+    let mut queue: VecDeque<State> =
+        VecDeque::from_iter((0..4).map(|dir| (start_pos.0, start_pos.1, dir, 0, 0)));
     while let Some((x, y, dir, checkpoints, time)) = queue.pop_front() {
         let min_alt = min_altitudes[x][y][dir][checkpoints];
 

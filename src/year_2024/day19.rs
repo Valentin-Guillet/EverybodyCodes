@@ -137,4 +137,3 @@ fn decrypt_message(grid: &[Vec<char>], key: &[char], nb_rounds: u32) -> String {
 
     decrypt_grid(&decrypted_grid)
 }
-

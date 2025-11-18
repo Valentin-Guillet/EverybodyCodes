@@ -14,11 +14,7 @@ pub fn run(args: &RunArgs) -> u32 {
             .copied()
             .map(get_ranking_value)
             .sum(),
-        3 => parse_meteors(&data)
-            .iter()
-            .copied()
-            .map(shoot_meteor)
-            .sum(),
+        3 => parse_meteors(&data).iter().copied().map(shoot_meteor).sum(),
         _ => unreachable!(),
     }
 }
@@ -96,9 +92,9 @@ fn shoot_meteor((mut x, mut y): (usize, usize)) -> u32 {
     (x, y) = (x - y.div_ceil(2), y / 2);
 
     loop {
-        let score_iter = (0..3).filter_map(|row| {
-            ranking_score_to_meteor(row, (x, y))
-        }).min();
+        let score_iter = (0..3)
+            .filter_map(|row| ranking_score_to_meteor(row, (x, y)))
+            .min();
 
         if let Some(ranking_score) = score_iter {
             return ranking_score;

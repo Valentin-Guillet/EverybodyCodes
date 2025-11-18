@@ -118,7 +118,12 @@ fn get_default_part(year: u32, day: u8) -> Result<u8, Box<dyn Error>> {
     read_max_entry(
         format!("input/year_{year}/day{day:02}").as_str(),
         |e| e.file_type().is_ok_and(|e| e.is_file()),
-        |name| name.strip_prefix("part")?.strip_suffix(".txt")?.parse().ok(),
+        |name| {
+            name.strip_prefix("part")?
+                .strip_suffix(".txt")?
+                .parse()
+                .ok()
+        },
     )
 }
 

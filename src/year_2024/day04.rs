@@ -10,7 +10,7 @@ pub fn run(args: &RunArgs) -> i32 {
         1 | 2 => count_min_strikes(nails),
         3 => count_min_strikes_and_pulls(nails),
         _ => unreachable!(),
-  }
+    }
 }
 
 fn count_min_strikes(nails: Vec<i32>) -> i32 {

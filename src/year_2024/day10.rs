@@ -24,7 +24,7 @@ pub fn run(args: &RunArgs) -> Box<dyn Display> {
     }
 }
 
-fn get_split_grid_ref(grid: &mut Grid, row: usize, col: usize) -> GridRef {
+fn get_split_grid_ref(grid: &mut Grid, row: usize, col: usize) -> GridRef<'_> {
     let row_range = (9 * row)..(9 * (row + 1) - 1);
     let col_range = (9 * col)..(9 * (col + 1) - 1);
 
@@ -34,7 +34,7 @@ fn get_split_grid_ref(grid: &mut Grid, row: usize, col: usize) -> GridRef {
         .collect()
 }
 
-fn get_joined_grid_ref(grid: &mut Grid, row: usize, col: usize) -> GridRef {
+fn get_joined_grid_ref(grid: &mut Grid, row: usize, col: usize) -> GridRef<'_> {
     let row_range = (6 * row)..(6 * (row + 1) + 2);
     let col_range = (6 * col)..(6 * (col + 1) + 2);
 
