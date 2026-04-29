@@ -1,18 +1,33 @@
 #!/bin/bash
 
-year=$(ls src/ | grep -Eo "[0-9]+" | sort -nr | head -1)
+create_new_file() {
+  local src_path
+  while IFS= read -r -d '' file; do
+    nb_files=$(ls -1q "$file" | wc -l)
+    if [[ ("$file" == src/year_* && "$nb_files" -lt 20) || ("$file" == src/story_* && "$nb_files" -lt 3) ]]; then
+      src_path="$file"
+      break
+    fi
+  done < <(find src/* -type d -print0 | tac -s $'\0')
 
-day=$(ls src/year_$year/ | grep -Eo "[0-9]+" | sort -nr | head -1)
-day=${day##0}  # Remove leading zero to avoid octal error
-((day++))
+  if [[ -z "$src_path" ]]; then
+    echo "No missing files in current directories"
+    return 1
+  fi
+  local target_name="${src_path##src/}"
 
-day=$(printf "%02d" $day)
+  local day
+  day=$(ls "$src_path" | grep -Eo "[0-9]+" | sort -nr | head -1)
+  day=${day##0} # Remove leading zero to avoid octal error
+  ((day++))
 
-mkdir -p ./input/year_$year/day$day
+  day=$(printf "%02d" $day)
 
-sed -i "/load_year\!(year_$year/ s/\(day[[:digit:]]\{2\}\))/\1, day$day)/" src/lib.rs
+  mkdir -p "${src_path/src/input}"/day"$day"
 
-cat << EOF > src/year_$year/day$day.rs
+  sed -i "/load_src\!($target_name/ s/\(day[[:digit:]]\{2\}\))/\1, day$day)/" src/lib.rs
+
+  cat <<EOF >"$src_path"/day"$day".rs
 use crate::args::RunArgs;
 
 use std::fs::read_to_string;
@@ -28,3 +43,6 @@ pub fn run(args: &RunArgs) -> u32 {
     }
 }
 EOF
+}
+
+create_new_file

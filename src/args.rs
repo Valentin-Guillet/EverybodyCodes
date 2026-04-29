@@ -14,6 +14,9 @@ struct RunOptionArgs {
     #[arg(short, long)]
     year: Option<u32>,
 
+    #[arg(short, long, conflicts_with = "year", num_args = 0..=1, default_missing_value = "0")]
+    story: Option<u32>,
+
     #[arg(short, long)]
     day: Option<u8>,
 
@@ -22,7 +25,8 @@ struct RunOptionArgs {
 }
 
 pub struct RunArgs {
-    pub year: u32,
+    pub year: Option<u32>,
+    pub story: Option<u32>,
     pub day: u8,
     pub part: u8,
     pub input_file: PathBuf,
@@ -32,20 +36,33 @@ impl RunArgs {
     pub fn parse() -> Result<Self, Box<dyn Error>> {
         let args = RunOptionArgs::parse();
 
-        let year = match args.year {
-            Some(year) => year,
-            None => get_max_year_directory("src")?,
+        let (year, story) = match (args.year, args.story) {
+            (None, None) => (Some(get_max_src_directory("src", "year_")?), None),
+            (None, Some(0)) => (None, Some(get_max_src_directory("src", "story_")?)),
+            (year, story) => (year, story),
         };
+        let mut src_path = if year.is_some() {
+            format!("src/year_{}", year.unwrap())
+        } else {
+            format!("src/story_{}", story.unwrap())
+        };
+        let input_path = format!("input/{}", &src_path[4..]);
+
         let day = match args.day {
             Some(day) => day,
-            None => get_max_day_file(&format!("src/year_{year}"))?,
+            None => get_max_day_file(&src_path)?,
         };
 
-        let source_file = format!("src/year_{year}/day{day:02}.rs");
-        if !Path::new(&source_file).exists() {
+        src_path.push_str(&format!("/day{day:02}.rs"));
+        if !Path::new(&src_path).exists() {
+            let src_msg = if year.is_some() {
+                format!("year {}", year.unwrap())
+            } else {
+                format!("story {}", story.unwrap())
+            };
             return Err(io::Error::new(
                 io::ErrorKind::NotFound,
-                format!("no source file for year {year} day {day:02}"),
+                format!("no source file for {src_msg} day {day:02}"),
             )
             .into());
         }
@@ -53,22 +70,28 @@ impl RunArgs {
         let part = match args.part {
             Some(part) if (1..=3).contains(&part) => part,
             Some(part) => Err(format!("invalid part {part}"))?,
-            None => get_default_part(year, day)?,
+            None => get_default_part(&input_path, day)?,
         };
 
         let input_file = args
             .input_file
-            .unwrap_or_else(|| get_default_input(year, day, part));
+            .unwrap_or_else(|| get_default_input(&input_path, day, part));
 
         if !Path::new(&input_file).exists() {
+            let input_msg = if year.is_some() {
+                format!("year {}", year.unwrap())
+            } else {
+                format!("story {}", story.unwrap())
+            };
             return Err(io::Error::new(
                 io::ErrorKind::NotFound,
-                format!("no input file for year {year} day {day:02} part {part}"),
+                format!("no input file for {input_msg} day {day:02} part {part}"),
             )
             .into());
         }
 
         Ok(Self {
+            story,
             year,
             day,
             part,
@@ -98,11 +121,11 @@ where
         })
 }
 
-fn get_max_year_directory(path: &str) -> Result<u32, Box<dyn Error>> {
+fn get_max_src_directory(path: &str, prefix: &str) -> Result<u32, Box<dyn Error>> {
     read_max_entry(
         path,
         |e| e.file_type().is_ok_and(|e| e.is_dir()),
-        |name| name.strip_prefix("year_")?.parse().ok(),
+        |name| name.strip_prefix(prefix)?.parse().ok(),
     )
 }
 
@@ -114,9 +137,9 @@ fn get_max_day_file(path: &str) -> Result<u8, Box<dyn Error>> {
     )
 }
 
-fn get_default_part(year: u32, day: u8) -> Result<u8, Box<dyn Error>> {
+fn get_default_part(input_path: &str, day: u8) -> Result<u8, Box<dyn Error>> {
     read_max_entry(
-        format!("input/year_{year}/day{day:02}").as_str(),
+        format!("{}/day{day:02}", input_path).as_str(),
         |e| e.file_type().is_ok_and(|e| e.is_file()),
         |name| {
             name.strip_prefix("part")?
@@ -127,6 +150,6 @@ fn get_default_part(year: u32, day: u8) -> Result<u8, Box<dyn Error>> {
     )
 }
 
-fn get_default_input(year: u32, day: u8, part: u8) -> PathBuf {
-    format!("input/year_{year}/day{day:02}/part{part}.txt").into()
+fn get_default_input(input_path: &str, day: u8, part: u8) -> PathBuf {
+    format!("{}/day{day:02}/part{part}.txt", input_path).into()
 }

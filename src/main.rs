@@ -1,4 +1,4 @@
-use everybody_codes::{run_solution, RunArgs};
+use everybody_codes::{RunArgs, run_solution};
 use std::process;
 
 fn main() {
@@ -8,8 +8,10 @@ fn main() {
     });
 
     let solution = run_solution(&args);
-    println!(
-        "{}/{:02}/{} Answer: {solution}",
-        args.year, args.day, args.part
-    );
+    let msg = if args.year.is_some() {
+        format!("Year {}", args.year.unwrap())
+    } else {
+        format!("Story {}", args.story.unwrap())
+    };
+    println!("{msg}/{:02}/{} Answer: {solution}", args.day, args.part);
 }
