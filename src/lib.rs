@@ -35,6 +35,7 @@ load_src!(year_2025: day01, day02, day03, day04, day05, day06, day07, day08, day
 load_src!(story_1: day01, day02, day03);
 load_src!(story_2: day01, day02, day03);
 load_src!(story_3: day01, day02, day03);
+load_src!(story_4: day01);
 
 pub fn run_solution(args: &RunArgs) -> Box<dyn Display> {
     let run_fn: Vec<Solution> = iter::empty()
@@ -43,6 +44,7 @@ pub fn run_solution(args: &RunArgs) -> Box<dyn Display> {
         .chain(story_1())
         .chain(story_2())
         .chain(story_3())
+        .chain(story_4())
         .filter(|solution| {
             args.year.or(args.story).unwrap() == solution.year_or_story && args.day == solution.day
         })
