@@ -35,7 +35,7 @@ load_src!(year_2025: day01, day02, day03, day04, day05, day06, day07, day08, day
 load_src!(story_1: day01, day02, day03);
 load_src!(story_2: day01, day02, day03);
 load_src!(story_3: day01, day02, day03);
-load_src!(story_4: day01, day02);
+load_src!(story_4: day01, day02, day03);
 
 pub fn run_solution(args: &RunArgs) -> Box<dyn Display> {
     let run_fn: Vec<Solution> = iter::empty()
