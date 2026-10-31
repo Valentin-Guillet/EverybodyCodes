@@ -1,6 +1,6 @@
 use crate::args::RunArgs;
 
-use std::{collections::HashMap, fs::read_to_string, u32};
+use std::{collections::HashMap, fs::read_to_string};
 
 pub fn run(args: &RunArgs) -> u32 {
     let data = read_to_string(&args.input_file).expect("Error opening input file");
